@@ -1,0 +1,47 @@
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class ChatServer {
+	private Socket socket = null;
+	private ServerSocket server = null;
+	private DataInputStream streamIn = null;
+	
+	public ChatServer(int port) {
+		System.out.println("Binding to port " + port + " please wait...");
+		try {
+			server = new ServerSocket(port);
+			System.out.println("Server started: " + server);
+			System.out.println("Waiting for a client...");
+			socket = server.accept();
+			System.out.println("Client accepted: " + socket);
+			open();
+			boolean done = false;
+			
+			while(!done) {
+				String line = streamIn.readUTF();
+				System.out.println(line);
+				done = line.equals(".bye");
+			}
+		} catch (IOException e) {
+			done = true;
+		}
+	}
+	
+	public void close() {
+		
+	}
+	
+	public void open() throws IOException {
+		streamIn = new DataInputStream(new BufferedInputStream(socket.getInputStream()))
+	}
+	public static void main(String[] args) {
+		if (args.length != 1) {
+			System.out.println("Usage: java ChatServer port");
+			System.exit(-1); //error code
+		}
+		ChatServer server = new ChatServer(Integer.parseInt(args[0]));
+		server.close();
+	}
+}
